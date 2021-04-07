@@ -103,7 +103,8 @@
                 <h2>Gestão</h2>
                 <div class="sidebar__link">
                     <i class="fa fa-user-secret" aria-hidden="true"></i>
-                    <a href="#">Controle de Contas</a>
+                    
+                    <a href="{{ route('index_conta') }}">Controle de Contas</a>
                 </div>
                 <div class="sidebar__link">
                     <i class="fa fa-building-o"></i>
@@ -111,7 +112,7 @@
                 </div>
                 <div class="sidebar__link">
                     <i class="fa fa-wrench"></i>
-                    <a href="#">Cadastro de Empresas</a>
+                    <a href="{{ route('index_pessoa') }}">Cadastro de pessoas</a>
                 </div>
                 <div class="sidebar__link">
                     <i class="fa fa-archive"></i>
@@ -173,7 +174,7 @@
    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 
-
+   <script src="{{ asset('js/painel.js') }}" defer></script>
 
     @yield('script')
 </body>

@@ -3,11 +3,15 @@
 @section('style')
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.7/css/responsive.dataTables.min.css">
+
+    <link rel="stylesheet" href="{{ asset('css/jquery.dataTables.css') }}">
+
+
 
     <style>
+         tfoot {
+    display: table-header-group;
+}
     </style>
 
 @endsection
@@ -44,17 +48,27 @@
         </div>
     </div>
 
-    <table id="TABELA" class="display" cellspacing="0" width="100%">
+
+    <table  name="item" id="item" class="display" width="100%" cellspacing="0">
         <thead>
-            <tr class="">
-                <th scope="col">Descricao</th>
+            <tr >
+                <th scope="col">Descrição</th>
                 <th scope="col">Ativo</th>
-                <th scope="col">acao</th>
+                <th scope="col">ação</th>
             </tr>
+
         </thead>
+        <tfoot>
+            <tr >
+                <th scope="col">Descrição</th>
+                <th scope="col">Ativo</th>
+                <th scope="col">Ação</th>
+            </tr>
+
+        </tfoot>
         <tbody>
             @foreach ($listadeCategorias as $Categora)
-                <tr class="">
+                <tr >
                     <td>{{ $Categora->DescricaoCategora }}</td>
                     <td>{{ $Categora->Ativo }}</td>
                     <td>
@@ -70,57 +84,85 @@
 
 @section('script')
 
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
-   
-    <script>
-        $(document).ready(function() {
-            $('.delete').on('click', function() {
-                var nome = $(this).data(
-                    'nome'
-                ) // vamos buscar o valor do atributo data-name que temos no botão que foi clicado
-                var id = $(this).data('id'); // vamos buscar o valor do atributo data-id
-                // $('span.nome').text(nome + ' (id = ' + id + ')'); // inserir na o nome na pergunta de confirmação dentro da modal
-                $('span.nome').text(nome);
-                $('a.delete-yes').attr('href', 'destroy/' +
-                    id); // mudar dinamicamente o link, href do botão confirmar da modal
-                $('#myModal').modal('show'); // modal aparece
-            });
 
-            var table = $('#TABELA').DataTable({
-                dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
-                "columnDefs": [{
-                    className: "d-flex justify-content-around",
-                    "targets": [1],
-                    "visible": true,
-                    "searchable": false
-                }],
-                buttons: {
-                    dom: {
-                        container: {
-                            tag: 'div',
-                            className: 'flexcontent'
-                        },
-                        buttonLiner: {
-                            tag: null
-                        }
-                    },
-                    buttons: [{
-                        extend: 'csvHtml5',
-                        text: '<i class="fa fa-file-text-o"></i>CSV',
-                        title: 'Titulo de tabla en CSV',
-                        titleAttr: 'CSV',
-                        className: 'bg-gray-900 hover:bg-gray-700 text-gray-100 hover:text-gray-100 hover:no-underline  py-2 px-4 rounded-md',
-                        exportOptions: {
-                            modifier: {
-                                page: 'all'
-                            }
-                        }
-                    }, 
-                ] }
+
+
+
+    <script src="{{ asset('js/jquery.dataTables.js') }}"></script>
+    <script>
+        $('.delete').on('click', function() {
+            var nome = $(this).data(
+                'nome'
+            ) // vamos buscar o valor do atributo data-name que temos no botão que foi clicado
+            var id = $(this).data('id'); // vamos buscar o valor do atributo data-id
+            // $('span.nome').text(nome + ' (id = ' + id + ')'); // inserir na o nome na pergunta de confirmação dentro da modal
+            $('span.nome').text(nome);
+            $('a.delete-yes').attr('href', 'destroy/' +
+                id); // mudar dinamicamente o link, href do botão confirmar da modal
+            $('#myModal').modal('show'); // modal aparece
+        });
+
+        $('#item tfoot th').each(function() {
+            var title = $(this).text();
+            if (title == 'Ação') {
+                $(this).html(`<a href="{{ route('create_Categoria') }}"
+                class="bg-gray-900 hover:bg-gray-700 text-gray-100 hover:text-gray-100 hover:no-underline  py-2 px-4 rounded-md "
+                role="button" aria-pressed="true">
+                Inserir
+            </a>`);
+            }else {
+                $(this).html('<input type="text"  placeholder="Search ' + title + '" />');
+            }
+            
+        });
+
+        // DataTable
+        var otable = $('#item').DataTable()
+        // Apply the search
+        otable.columns().every(function() {
+
+            var that = this;
+            $('input', this.footer()).on('keyup change', function() {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
             });
         });
+
+        // var table = $('#TABELA').DataTable({
+        //     dom: 'Bfrt<"col-md-6 inline"i> <"col-md-6 inline"p>',
+        //     "columnDefs": [{
+        //         className: "d-flex justify-content-around",
+        //         "targets": [1],
+        //         "visible": true,
+        //         "searchable": false
+        //     }],
+        //     buttons: {
+        //         dom: {
+        //             container: {
+        //                 tag: 'div',
+        //                 className: 'flexcontent'
+        //             },
+        //             buttonLiner: {
+        //                 tag: null
+        //             }
+        //         },
+        //         buttons: [{
+        //             extend: 'csvHtml5',
+        //             text: '<i class="fa fa-file-text-o"></i>CSV',
+        //             title: 'Titulo de tabla en CSV',
+        //             titleAttr: 'CSV',
+        //             className: 'bg-gray-900 hover:bg-gray-700 text-gray-100 hover:text-gray-100 hover:no-underline  py-2 px-4 rounded-md',
+        //             exportOptions: {
+        //                 modifier: {
+        //                     page: 'all'
+        //                 }
+        //             }
+        //         }, 
+        //     ] }
+        // });
 
     </script>
 @endsection

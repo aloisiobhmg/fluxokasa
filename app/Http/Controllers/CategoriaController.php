@@ -77,15 +77,15 @@ class CategoriaController extends Controller
      * @return \Illuminate\Http\Response
      */
     // public function update(Request $request, Categoria $categoria)
-    public function update(StoreUpdateCategoriaRequest $request)
+    public function update(Request $request)
     {
+       
         $data = Categoria::findOrFail($request->id);
-        $data->DescricaoCategora = $request->DescricaoCategora;
-        $data->Ativo = $request->Ativo;
-        $data->update();
+       $data->update($request->all());
 
-        Session::flash('alert-success', 'Categoria editada com sucesso!');
-        return back();
+        
+        return back()
+        ->with('alert-success', 'Categoria editada com sucesso!');
 
     }
 
